@@ -36,8 +36,9 @@ namespace LineDrawer
 
         public TextLayout TextLayout { get; private set; }
         public TextFormat TextFormat { get; private set; }
-       
 
+        private List<Line> _lines = new List<Line>();
+        private Line _currentLine;
 
         [STAThread]
         private static void Main()
@@ -112,6 +113,14 @@ namespace LineDrawer
 
             RenderTarget2D.DrawTextLayout(new Vector2(0, 0), TextLayout, SceneColorBrush, DrawTextOptions.None);
 
+            //Render current line if not null "?." operator  
+            ((IRenderableItem) _currentLine)?.Render(RenderTarget2D);
+
+            //and all added lines 
+            foreach (IRenderableItem line in _lines )
+            {
+                line.Render(RenderTarget2D);
+            }
         }
 
 
@@ -127,14 +136,30 @@ namespace LineDrawer
             //keep new mouse coordinates
             _mousePosition.x = e.X;
             _mousePosition.y = e.Y;
+
+            if (_currentLine != null)
+            {
+                _currentLine.EndingingPoint = new Vector2(e.X, e.Y);
+            }
         }
 
         protected override void MouseDown(MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                _currentLine = new Line(new Vector2(_mousePosition.x, _mousePosition.y), 
+                                        new Vector2(_mousePosition.x, _mousePosition.y),
+                                        RenderTarget2D);
+            }
         }
 
         protected override void MouseUp(MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                _lines.Add(_currentLine);
+                _currentLine = null;
+            }
         }
 
         protected override void KeyDown(KeyEventArgs e)

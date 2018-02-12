@@ -10,26 +10,33 @@ namespace LineDrawer
 {
     class Line : IRenderableItem
     {
-        private Vector2 _startingPoint;
-        private Vector2 _endingingPoint;
-        private Brush _defaultBrush;
+        public Vector2 StartingPoint { get; set; }
+        public Vector2 EndingingPoint { get; set; }
+        public  Brush DefaultBrush { get; set; }
+
         private RenderTarget _renderTarget;
 
         public Line(Vector2 from, Vector2 to, RenderTarget renderTarget)
         {
+            //TODO: should move out renderTarget out of the constructor.
             _renderTarget = renderTarget;
-            _defaultBrush = new SolidColorBrush(_renderTarget, Color.White);
+            DefaultBrush = new SolidColorBrush(_renderTarget, Color.White);
+            StartingPoint = from;
+            EndingingPoint = to;
         }
         public Line(Vector2 from, Vector2 to, RenderTarget renderTarget, Brush brush )
         {
             _renderTarget = renderTarget;
-            _defaultBrush = brush;
+            DefaultBrush = brush;
+
+            StartingPoint = from;
+            EndingingPoint = to;
         }
 
 
         void IRenderableItem.Render(RenderTarget renderTarget2D)
         {
-            renderTarget2D.DrawLine(_startingPoint, _endingingPoint, _defaultBrush);
+            renderTarget2D.DrawLine(StartingPoint, EndingingPoint, DefaultBrush);
         }
     }
 }
