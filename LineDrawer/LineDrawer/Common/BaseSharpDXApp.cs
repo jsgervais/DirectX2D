@@ -96,9 +96,14 @@ namespace LineDrawer.Common
             bool isFormClosed = false;
             bool formIsResizing = false;
 
+            _form.MouseMove += HandleMouseMove;
             _form.MouseClick += HandleMouseClick;
+            _form.MouseDown += HandleMouseDown;
+            _form.MouseUp += HandleMouseUp;
+ 
             _form.KeyDown += HandleKeyDown;
             _form.KeyUp += HandleKeyUp;
+
             _form.Resize += (o, args) =>
             {
                 if (_form.WindowState != _currentFormWindowState)
@@ -265,6 +270,16 @@ namespace LineDrawer.Common
         {
         }
 
+        protected virtual void MouseMove(MouseEventArgs e)
+        {
+        }
+        protected virtual void MouseDown(MouseEventArgs e)
+        {
+        }
+        protected virtual void MouseUp(MouseEventArgs e)
+        {
+        }
+
         protected virtual void KeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
@@ -283,6 +298,21 @@ namespace LineDrawer.Common
         private void HandleMouseClick(object sender, MouseEventArgs e)
         {
             MouseClick(e);
+        }
+
+        private void HandleMouseMove(object sender, MouseEventArgs e)
+        {
+            MouseMove(e);
+        }
+
+        private void HandleMouseDown(object sender, MouseEventArgs e)
+        {
+            MouseDown(e);
+        }
+
+        private void HandleMouseUp(object sender, MouseEventArgs e)
+        {
+            MouseUp(e);
         }
 
         /// <summary>

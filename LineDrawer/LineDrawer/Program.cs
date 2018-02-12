@@ -11,11 +11,13 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using LineDrawer.Common;
+using SharpDX.DirectWrite;
 using SharpDX.Windows;
 
 using AlphaMode = SharpDX.Direct2D1.AlphaMode;
 using Device = SharpDX.Direct3D11.Device;
 using Factory = SharpDX.DXGI.Factory;
+using Timer = LineDrawer.Common.Timer;
 
 namespace LineDrawer
 {
@@ -27,18 +29,57 @@ namespace LineDrawer
     /// </summary>
     class Program : SharpDx2D11Base
     {
+        private const int APP_WIDTH = 1024;
+        private const int APP_HEIGHT = 768;
+
+        private MousePosition _mousePosition = new MousePosition();
+
+        public TextLayout TextLayout { get; private set; }
+        public TextFormat TextFormat { get; private set; }
+       
+
+
         [STAThread]
         private static void Main()
         {
             Program program = new Program();
-            var demoConfig = new DisplayWindowConfiguration("LineDrawer", 1024,768);
+            var demoConfig = new DisplayWindowConfiguration("LineDrawer", APP_WIDTH, APP_HEIGHT);
             program.Run(demoConfig);
 
             // Main loop is implemented in base Class BaseSharpDXApp
             
         }
-         
 
+        protected override void Initialize(DisplayWindowConfiguration conf)
+        {
+            base.Initialize(conf);
+
+            // Initialize a TextFormat
+            TextFormat = new TextFormat(FactoryDWrite, "Calibri", 20) { TextAlignment = TextAlignment.Leading, ParagraphAlignment = ParagraphAlignment.Center };
+
+            RenderTarget2D.TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode.Cleartype;
+            TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, conf.Width, conf.Height);
+
+        }
+
+
+        public class MousePosition
+        {
+            private string _label = "Mouse at (x:{0}, y:{1})";
+            public int x;
+            public int y;
+
+            public MousePosition()
+            {
+            }
+
+            public string GetMouseCoordinates()
+            {
+                return String.Format(_label, x, y);
+            }
+        }
+
+         
 
         /// <summary>
         /// This method is called once per game loop after calling Update. Like Update, the Render() 
@@ -60,13 +101,17 @@ namespace LineDrawer
         /// OnRender will Call each Active GameObjects to be Rendered 
         protected override void OnRender()
         {
+            //clear previous frame
+            RenderTarget2D.Clear(null);
 
-            //SolidColorBrush brush = new SolidColorBrush(RenderTarget2D, Color.Azure);
+            //if display mouse coords  -- add a checkbox or option menu later \
 
-            var vectorFrom = new RawVector2(5f, 10f);
-            var vectorTo = new RawVector2(200f, 250f);
+            //top left corner : (0,0)
+            TextLayout.Dispose();
+            TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, 400, 40);
 
-            RenderTarget2D.DrawLine(vectorFrom, vectorTo, SceneColorBrush);
+            RenderTarget2D.DrawTextLayout(new Vector2(0, 0), TextLayout, SceneColorBrush, DrawTextOptions.None);
+
         }
 
 
@@ -75,6 +120,21 @@ namespace LineDrawer
         protected override void MouseClick(MouseEventArgs e)
         {
 
+        }
+
+        protected override void MouseMove(MouseEventArgs e)
+        {
+            //keep new mouse coordinates
+            _mousePosition.x = e.X;
+            _mousePosition.y = e.Y;
+        }
+
+        protected override void MouseDown(MouseEventArgs e)
+        {
+        }
+
+        protected override void MouseUp(MouseEventArgs e)
+        {
         }
 
         protected override void KeyDown(KeyEventArgs e)
