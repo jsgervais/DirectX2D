@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using SharpDX.DXGI;
 using SharpDX.Windows;
 
 namespace LineDrawer.Common
@@ -16,12 +17,12 @@ namespace LineDrawer.Common
         private readonly Timer clock = new Timer();
         private FormWindowState _currentFormWindowState;
         private bool _disposed;
-        private Form _form;
         private float _frameAccumulator;
         private int _frameCount;
-        private DisplayWindowConfiguration _displayWindowConfiguration;
+        protected DisplayWindowConfiguration _displayWindowConfiguration;
+        protected Form _form;
 
-    #region "Destructors and Dispose functions"
+        #region "Destructors and Dispose functions"
 
         /// <summary>
         ///   Performs object finalization.
@@ -103,6 +104,15 @@ namespace LineDrawer.Common
  
             _form.KeyDown += HandleKeyDown;
             _form.KeyUp += HandleKeyUp;
+
+
+
+            _form.ResizeBegin += (o, e) => {
+                _displayWindowConfiguration.Height = ((Form)o).Height;
+                _displayWindowConfiguration.Width = ((Form)o).Width;
+            };
+            _form.ResizeEnd += HandleResize;
+            //_form.SizeChanged += HandleResize;
 
             _form.Resize += (o, args) =>
             {
@@ -335,43 +345,12 @@ namespace LineDrawer.Common
             KeyUp(e);
         }
 
-        private void HandleResize(object sender, EventArgs e)
+        protected virtual void HandleResize(object sender, EventArgs e)
         {
-            if (_form.WindowState == FormWindowState.Minimized)
-            {
-                return;
-            }
-
-            // UnloadContent();
-
-            //_configuration.WindowWidth = _form.ClientSize.Width;
-            //_configuration.WindowHeight = _form.ClientSize.Height;
-
-            //if( Context9 != null ) {
-            //    userInterfaceRenderer.Dispose();
-
-            //    Context9.PresentParameters.BackBufferWidth = _configuration.WindowWidth;
-            //    Context9.PresentParameters.BackBufferHeight = _configuration.WindowHeight;
-
-            //    Context9.Device.Reset( Context9.PresentParameters );
-
-            //    userInterfaceRenderer = new UserInterfaceRenderer9( Context9.Device, _form.ClientSize.Width, _form.ClientSize.Height );
-            //} else if( Context10 != null ) {
-            //    userInterfaceRenderer.Dispose();
-
-            //    Context10.SwapChain.ResizeBuffers( 1, WindowWidth, WindowHeight, Context10.SwapChain.Description.ModeDescription.Format, Context10.SwapChain.Description.Flags );
-
-
-            //    userInterfaceRenderer = new UserInterfaceRenderer10( Context10.Device, _form.ClientSize.Width, _form.ClientSize.Height );
-            //}
-
-            // LoadContent();
+            
         }
 
      
-
-        
-         
         #endregion
 
 

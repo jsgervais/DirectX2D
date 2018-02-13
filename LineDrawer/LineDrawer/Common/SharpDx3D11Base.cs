@@ -1,4 +1,6 @@
-﻿using SharpDX;
+﻿using System;
+using System.Windows.Forms;
+using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -11,10 +13,10 @@ namespace LineDrawer.Common
     /// </summary>
     public class SharpDx3D11Base : BaseSharpDXApp
     {
-        Device _device;
-        SwapChain _swapChain;
-        Texture2D _backBuffer;
-        RenderTargetView _backBufferView;
+        protected Device _device;
+        protected SwapChain _swapChain;
+        protected Texture2D _backBuffer;
+        protected RenderTargetView _backBufferView;
 
         /// <summary>
         /// Returns the device
@@ -56,8 +58,10 @@ namespace LineDrawer.Common
             {
                 BufferCount = 1,
                 ModeDescription = 
-                    new ModeDescription(displayWindowConfiguration.Width, displayWindowConfiguration.Height,
-                                        new Rational(60, 1), Format.R8G8B8A8_UNorm),
+                    new ModeDescription(displayWindowConfiguration.Width, 
+                                        displayWindowConfiguration.Height,
+                                        new Rational(60, 1), 
+                                        Format.R8G8B8A8_UNorm),
                 IsWindowed = true,
                 OutputHandle = DisplayHandle,
                 SampleDescription = new SampleDescription(1, 0),
@@ -77,6 +81,9 @@ namespace LineDrawer.Common
 
             _backBufferView = new RenderTargetView(_device, _backBuffer);
         }
+
+
+       
 
         protected override void BeginDraw()
         {

@@ -1,7 +1,9 @@
-﻿using SharpDX.Direct2D1;
+﻿using System;
+using System.Windows.Forms;
+using SharpDX.Direct2D1;
 using SharpDX.DXGI;
 using SharpDX;
-
+using SharpDX.Direct3D11;
 using AlphaMode = SharpDX.Direct2D1.AlphaMode;
 using Factory = SharpDX.Direct2D1.Factory;
 
@@ -17,16 +19,17 @@ namespace LineDrawer.Common
         public RenderTarget RenderTarget2D { get; private set; }
         public SolidColorBrush SceneColorBrush { get; private set;}
 
+        private Surface _surface;
+
         protected override void Initialize(DisplayWindowConfiguration displayWindowConfiguration)
         {
             base.Initialize(displayWindowConfiguration);
             Factory2D = new SharpDX.Direct2D1.Factory();
-            using (var surface = BackBuffer.QueryInterface<Surface>())
-            {
-                RenderTarget2D = new RenderTarget(Factory2D, 
-                                                  surface,
-                                                  new RenderTargetProperties(new PixelFormat(Format.Unknown, AlphaMode.Premultiplied)));
-            }
+            _surface = BackBuffer.QueryInterface<Surface>();
+            RenderTarget2D = new RenderTarget(Factory2D, 
+                                                _surface,
+                                                new RenderTargetProperties(new PixelFormat(Format.Unknown, AlphaMode.Premultiplied)));
+             
             RenderTarget2D.AntialiasMode = AntialiasMode.PerPrimitive;
 
             FactoryDWrite = new SharpDX.DirectWrite.Factory();
@@ -50,6 +53,43 @@ namespace LineDrawer.Common
         {
             RenderTarget2D.EndDraw();
             base.EndDraw();
+        }
+
+
+
+        protected override void HandleResize(object sender, EventArgs e)
+        {
+            if (_form.WindowState == FormWindowState.Minimized)
+            {
+                return;
+            }
+            //var form = (Form) sender;
+            //unbinds everything
+            _device.ImmediateContext.ClearState();
+
+            UnloadContent();
+
+            RenderTarget2D.Dispose();
+            _backBufferView?.Dispose();
+            _backBuffer.Dispose();
+            _surface.Dispose();
+
+            _swapChain.ResizeBuffers(1,
+                                    _form.ClientSize.Width,
+                                    _form.ClientSize.Height,
+                                    Format.Unknown,
+                                    SwapChainFlags.AllowModeSwitch);
+
+            _backBuffer = Texture2D.FromSwapChain<Texture2D>(_swapChain, 0);
+            _backBufferView = new RenderTargetView(_device, _backBuffer);
+
+            _surface = BackBuffer.QueryInterface<Surface>();
+            RenderTarget2D = new RenderTarget(Factory2D,
+                                             _surface,
+                                             new RenderTargetProperties(new PixelFormat(Format.Unknown, AlphaMode.Premultiplied)));
+             
+
+            LoadContent();
         }
     }
 }
