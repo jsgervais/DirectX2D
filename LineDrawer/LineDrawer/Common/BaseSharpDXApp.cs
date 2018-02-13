@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using SharpDX.DXGI;
+using SharpDX.Win32;
 using SharpDX.Windows;
 
 namespace LineDrawer.Common
@@ -21,6 +22,7 @@ namespace LineDrawer.Common
         private int _frameCount;
         protected DisplayWindowConfiguration _displayWindowConfiguration;
         protected Form _form;
+        private bool _isResizing = false;
 
         #region "Destructors and Dispose functions"
 
@@ -110,9 +112,15 @@ namespace LineDrawer.Common
             _form.ResizeBegin += (o, e) => {
                 _displayWindowConfiguration.Height = ((Form)o).Height;
                 _displayWindowConfiguration.Width = ((Form)o).Width;
+                _isResizing = true;
             };
-            _form.ResizeEnd += HandleResize;
-            //_form.SizeChanged += HandleResize;
+            _form.ResizeEnd += (o, e) =>
+            {
+                formIsResizing = false;
+                HandleResize(o, e);
+            };
+
+            _form.SizeChanged += HandleResize;
 
             _form.Resize += (o, args) =>
             {
@@ -398,6 +406,11 @@ namespace LineDrawer.Common
             {
                 return _form.ClientSize;
             }
+        }
+
+        protected bool IsResiszing()
+        {
+            return _isResizing;
         }
 
         #endregion

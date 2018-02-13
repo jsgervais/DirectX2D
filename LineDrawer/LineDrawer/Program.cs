@@ -145,6 +145,9 @@ namespace LineDrawer
 
         protected override void MouseDown(MouseEventArgs e)
         {
+            //Don't start creating a line if resizing window
+            if (IsResiszing()) return;
+         
             if (e.Button == MouseButtons.Left)
             {
                 _currentLine = new Line(new Vector2(_mousePosition.x, _mousePosition.y), 
