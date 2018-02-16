@@ -56,7 +56,11 @@ namespace LineDrawer.Common
         }
 
 
-
+        /// <summary>
+        /// Handles resizing the display Window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected override void HandleResize(object sender, EventArgs e)
         {
             if (_form.WindowState == FormWindowState.Minimized)

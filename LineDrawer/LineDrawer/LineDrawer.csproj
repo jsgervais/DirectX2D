@@ -76,10 +76,16 @@
     <Compile Include="Common\SharpDx2D11Base.cs" />
     <Compile Include="Common\SharpDx2D11BaseWinForm.cs" />
     <Compile Include="Common\SharpDx3D11Base.cs" />
+    <Compile Include="GUI\GUIBaseControl.cs" />
+    <Compile Include="GUI\GUIButton.cs" />
+    <Compile Include="GUI\GUICheckbox.cs" />
+    <Compile Include="GUI\GUIManager.cs" />
+    <Compile Include="GUI\GUIRadioButton.cs" />
+    <Compile Include="IUpdatabeItem.cs" />
     <Compile Include="IRendable2DItem.cs" />
     <Compile Include="Line.cs" />
+    <Compile Include="Common\MousePosition.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="SceneManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

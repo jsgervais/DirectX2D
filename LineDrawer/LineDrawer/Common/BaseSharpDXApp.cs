@@ -152,7 +152,7 @@ namespace LineDrawer.Common
                     return;
                 }
 
-                OnUpdate();
+                Update();
                 if (!formIsResizing)
                     Render();
             });
@@ -188,7 +188,7 @@ namespace LineDrawer.Common
         /// up, as needed to make this more efficient.
         /// 
         /// </summary>
-        protected virtual void Update(Timer time)
+        protected virtual void OnUpdate(Timer time)
         {
         }
 
@@ -230,10 +230,10 @@ namespace LineDrawer.Common
         /// <summary>
         ///   Updates time since last frame
         /// </summary>
-        private void OnUpdate()
+        private void Update()
         {
             FrameDelta = (float)clock.Update();
-            Update(clock);
+            OnUpdate(clock);
         }
 
 

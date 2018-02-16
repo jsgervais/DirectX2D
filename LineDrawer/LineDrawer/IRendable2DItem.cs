@@ -1,13 +1,14 @@
-﻿using SharpDX.Direct2D1;
+﻿using LineDrawer.Common;
+using SharpDX.Direct2D1;
 
 namespace LineDrawer
 {
-    public interface IRenderableItem
+    public interface IUpdatableItem
     {
          /// <summary>
-         /// Each items knows how to render itself properly (i.e Drawline, DrawCircule, DrawBitmap, DrawGeometry etc)
+         /// Anything that moves or have to change state before being rendered
          /// </summary>
          /// <param name="renderTarget"></param>
-         void Render(RenderTarget renderTarget);
+         void Update(Timer time);
     }
 }

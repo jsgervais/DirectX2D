@@ -11,6 +11,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using LineDrawer.Common;
+using LineDrawer.GUI;
 using SharpDX.DirectWrite;
 using SharpDX.Windows;
 
@@ -27,18 +28,20 @@ namespace LineDrawer
     /// See C++ example on implemeting a small DirectX11 rendering framwork : 
     /// https://msdn.microsoft.com/en-us/library/windows/desktop/dn643747(v=vs.85).aspx
     /// </summary>
-    class Program : SharpDx2D11Base
+    partial class Program : SharpDx2D11Base
     {
         private const int APP_WIDTH = 1024;
         private const int APP_HEIGHT = 768;
 
-        private MousePosition _mousePosition = new MousePosition();
+        private readonly MousePosition _mousePosition = new MousePosition();
+        private readonly GUIManager _guiManager = new GUIManager();
 
         public TextLayout TextLayout { get; private set; }
         public TextFormat TextFormat { get; private set; }
 
         private List<Line> _lines = new List<Line>();
         private Line _currentLine;
+
 
         [STAThread]
         private static void Main()
@@ -61,26 +64,23 @@ namespace LineDrawer
             RenderTarget2D.TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode.Cleartype;
             TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, conf.Width, conf.Height);
 
+
+            _guiManager.AddButton(10, 80, 200, 75, "Button", () =>
+                {
+                    Console.WriteLine("Button was clicked!");
+
+                    //todo set color
+                }
+            );
+
         }
 
 
-        public class MousePosition
+        protected override void OnUpdate(Timer time)
         {
-            private string _label = "Mouse at (x:{0}, y:{1})";
-            public int x;
-            public int y;
+            _guiManager.Update(time);
 
-            public MousePosition()
-            {
-            }
-
-            public string GetMouseCoordinates()
-            {
-                return String.Format(_label, x, y);
-            }
         }
-
-         
 
         /// <summary>
         /// This method is called once per game loop after calling Update. Like Update, the Render() 
@@ -107,10 +107,9 @@ namespace LineDrawer
 
             //if display mouse coords  -- add a checkbox or option menu later \
 
-            //top left corner : (0,0)
+            //Display Mouse coordinates:  top left corner : (0,0)
             TextLayout.Dispose();
             TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, 400, 40);
-
             RenderTarget2D.DrawTextLayout(new Vector2(0, 0), TextLayout, SceneColorBrush, DrawTextOptions.None);
 
             //Render current line if not null "?." operator  
@@ -121,6 +120,10 @@ namespace LineDrawer
             {
                 line.Render(RenderTarget2D);
             }
+
+            //At last, display GUI on top of everything
+            _guiManager.Render(RenderTarget2D);
+
         }
 
 
@@ -128,7 +131,7 @@ namespace LineDrawer
 
         protected override void MouseClick(MouseEventArgs e)
         {
-
+            _guiManager.MouseClick(e);
         }
 
         protected override void MouseMove(MouseEventArgs e)
@@ -137,7 +140,9 @@ namespace LineDrawer
             _mousePosition.x = e.X;
             _mousePosition.y = e.Y;
 
-            if (_currentLine != null)
+            _guiManager.MouseMove(e);
+
+            if (_currentLine != null && ! _guiManager.IsOverGUIItem() )
             {
                 _currentLine.EndingingPoint = new Vector2(e.X, e.Y);
             }
@@ -146,7 +151,7 @@ namespace LineDrawer
         protected override void MouseDown(MouseEventArgs e)
         {
             //Don't start creating a line if resizing window
-            if (IsResiszing()) return;
+            //if (IsResiszing()) return;
          
             if (e.Button == MouseButtons.Left)
             {
@@ -158,7 +163,7 @@ namespace LineDrawer
 
         protected override void MouseUp(MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (_currentLine != null && e.Button == MouseButtons.Left)
             {
                 _lines.Add(_currentLine);
                 _currentLine = null;
