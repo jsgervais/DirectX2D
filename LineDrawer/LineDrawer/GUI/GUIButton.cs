@@ -12,7 +12,9 @@ namespace LineDrawer.GUI
          
         public bool RoundedButton { get; set; }
         public Color BackgroundColor { get; set; } = Color.Teal;
+        public Color BackgroundColorHover { get; set; } = Color.DeepSkyBlue;
         public Color BorderColor { get; set; } = Color.Aquamarine;
+        public Color BorderColorHover { get; set; } = Color.DarkBlue;
         public Color TextColor { get; set; } = Color.Black;
 
         public string Text { get; set; }
@@ -42,28 +44,16 @@ namespace LineDrawer.GUI
 
         public override void Render(RenderTarget renderTarget)
         {
-            var area = new RawRectangleF(PositionX, PositionY, PositionX+Width, PositionY+Height);
+            DrawFilledRectangle(renderTarget, PositionX, PositionY, Width, Height, BackgroundColor );
+            DrawBorderBox(renderTarget, PositionX, PositionY, Width, Height, BorderColor);
+            DrawText(renderTarget, PositionX, PositionY, TextLayout, TextColor);
+        }
 
-            //Draw background filled rectangle
-            using (var brush = new SolidColorBrush(renderTarget, BackgroundColor))
-            {
-                renderTarget.FillRectangle(area, brush);
-            }
-
-            using (var brush = new SolidColorBrush(renderTarget, BorderColor))
-            {
-                renderTarget.DrawRectangle(area, brush);
-            }
-
-            
-
-            using (var textBrush = new SolidColorBrush(renderTarget, TextColor))
-            {
-                //renderTarget.DrawText(Text, TextFormat, area, textBrush, DrawTextOptions.Clip );
-                renderTarget.DrawTextLayout(new RawVector2(PositionX, PositionY), TextLayout, textBrush );
-            }
-
-
+        public override void DrawHover(RenderTarget renderTarget)
+        {
+            DrawFilledRectangle(renderTarget, PositionX, PositionY, Width, Height, BackgroundColorHover);
+            DrawBorderBox(renderTarget, PositionX, PositionY, Width, Height, BorderColorHover);
+            DrawText(renderTarget, PositionX, PositionY, TextLayout, TextColor);
         }
     }
 }

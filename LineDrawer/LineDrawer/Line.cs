@@ -24,10 +24,10 @@ namespace LineDrawer
             StartingPoint = from;
             EndingingPoint = to;
         }
-        public Line(Vector2 from, Vector2 to, RenderTarget renderTarget, Brush brush )
+        public Line(Vector2 from, Vector2 to, RenderTarget renderTarget, Color lineColor )
         {
             _renderTarget = renderTarget;
-            DefaultBrush = brush;
+            DefaultBrush = new SolidColorBrush(renderTarget, lineColor);
 
             StartingPoint = from;
             EndingingPoint = to;

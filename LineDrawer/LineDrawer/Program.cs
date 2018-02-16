@@ -41,7 +41,7 @@ namespace LineDrawer
 
         private List<Line> _lines = new List<Line>();
         private Line _currentLine;
-
+        private Color _currentLineColor = Color.White;
 
         [STAThread]
         private static void Main()
@@ -65,12 +65,15 @@ namespace LineDrawer
             TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, conf.Width, conf.Height);
 
 
-            _guiManager.AddButton(10, 80, 200, 75, "Button", () =>
+            _guiManager.AddButton(10, 80, 200, 50, "White Color", () =>
                 {
-                    Console.WriteLine("Button was clicked!");
-
-                    //todo set color
+                    _currentLineColor = Color.White;
                 }
+            );
+            _guiManager.AddButton(10, 140, 200, 50, "Red Color", () =>
+            {
+                _currentLineColor = Color.Red;
+            }
             );
 
         }
@@ -157,7 +160,7 @@ namespace LineDrawer
             {
                 _currentLine = new Line(new Vector2(_mousePosition.x, _mousePosition.y), 
                                         new Vector2(_mousePosition.x, _mousePosition.y),
-                                        RenderTarget2D);
+                                        RenderTarget2D, _currentLineColor);
             }
         }
 

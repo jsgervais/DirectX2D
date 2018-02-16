@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using SharpDX;
 using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
+using SharpDX.Mathematics.Interop;
 using Timer = LineDrawer.Common.Timer;
 
 namespace LineDrawer.GUI
@@ -51,21 +52,6 @@ namespace LineDrawer.GUI
 
         }
 
-        public static void DrawFilledRectangle(RenderTarget renderTarget, int x, int y, Font font, Color color = default(Color))
-        {
-
-        }
-
-        public static void DrawBorderBox(RenderTarget renderTarget, int x, int y, Color color = default(Color))
-        {
-
-        }
-
-        public static void DrawText(RenderTarget remderTarget, int x, int y, Font font, Color color = default(Color))
-        {
-
-        }
-
         /// <summary>
         /// Update all items (check for on mouse over, focus, etc)
         /// </summary>
@@ -88,6 +74,8 @@ namespace LineDrawer.GUI
             {
                 control.Render(renderTarget);
             }
+            _currentHoverControl?.DrawHover(renderTarget);
+            _currentFocusedControl?.DrawFocus(renderTarget);
         }
 
         /// <summary>
@@ -114,7 +102,6 @@ namespace LineDrawer.GUI
                     control.PositionY < e.Y && (control.PositionY + control.Height) > e.Y)
                 {
                     _currentHoverControl = control;
-                    Console.WriteLine("Mouse over one control");
                 }
             }
         }

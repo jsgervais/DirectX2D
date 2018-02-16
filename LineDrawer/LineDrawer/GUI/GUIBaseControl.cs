@@ -4,7 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LineDrawer.Common;
+using SharpDX;
 using SharpDX.Direct2D1;
+using SharpDX.DirectWrite;
+using SharpDX.Mathematics.Interop;
+using Factory = SharpDX.DirectWrite.Factory;
 
 namespace LineDrawer.GUI
 {
@@ -17,12 +21,14 @@ namespace LineDrawer.GUI
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Enabled { get; set; }
+        
 
-        public SharpDX.DirectWrite.Factory FactoryDWrite { get; private set; }
+
+        public Factory FactoryDWrite { get; private set; }
 
         public GUIBaseControl()
         {
-            FactoryDWrite = new SharpDX.DirectWrite.Factory();
+            FactoryDWrite = new Factory();
         }
 
         /// <summary>
@@ -61,6 +67,45 @@ namespace LineDrawer.GUI
         public virtual void Render(RenderTarget renderTarget)
         {
 
+        }
+
+
+        /// <summary>
+        /// Draws a filled Rectancgle  
+        /// </summary>
+        /// <param name="renderTarget"></param>
+        /// <param name="x">Left</param>
+        /// <param name="y">Top</param>
+        /// <param name="w">Total Width</param>
+        /// <param name="h">Total Height</param>
+        /// <param name="color">Background color</param>
+        protected static void DrawFilledRectangle(RenderTarget renderTarget, int x, int y, int w, int h, Color color = default(Color))
+        {
+            var area = new RawRectangleF(x, y, x+w, y+h);
+            using (var brush = new SolidColorBrush(renderTarget, color))
+            {
+                renderTarget.FillRectangle(area, brush);
+            }
+
+        }
+
+        protected static void DrawBorderBox(RenderTarget renderTarget, int x, int y, int w, int h, Color color = default(Color))
+        {
+            var area = new RawRectangleF(x, y, x + w, y + h);
+            using (var brush = new SolidColorBrush(renderTarget, color))
+            {
+                renderTarget.DrawRectangle(area, brush);
+            }
+
+        }
+
+        protected static void DrawText(RenderTarget renderTarget, int x, int y, TextLayout textLayout, Color color = default(Color))
+        {
+            using (var textBrush = new SolidColorBrush(renderTarget, color))
+            {
+                //renderTarget.DrawText(Text, TextFormat, area, textBrush, DrawTextOptions.Clip );
+                renderTarget.DrawTextLayout(new RawVector2(x, y), textLayout, textBrush);
+            }
         }
     }
 }
