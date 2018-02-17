@@ -15,8 +15,10 @@ namespace LineDrawer.GUI
     /// Helper class to manage and draw basic user interface components under directX.
     /// Manages a set of controls working together.
     /// </summary>
-    class GUIManager : IRenderableItem, IUpdatableItem
+    class GUIManager : IRenderable, IUpdatableItem
     {
+ 
+
         private List<GUIBaseControl> _controls = new List<GUIBaseControl>();
         private GUIBaseControl _currentFocusedControl;
         private GUIBaseControl _currentHoverControl;
@@ -70,7 +72,7 @@ namespace LineDrawer.GUI
         /// <param name="renderTarget"></param>
         public void Render(RenderTarget renderTarget)
         {
-            foreach (IRenderableItem control in _controls)
+            foreach (IRenderable control in _controls)
             {
                 control.Render(renderTarget);
             }

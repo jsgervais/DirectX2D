@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.Direct2D1;
+using SharpDX.Mathematics.Interop;
 
 namespace LineDrawer
 {
-    class Line : IRenderableItem
+    class Rectangle : IRenderableItem
     {
         public Vector2 StartingPoint { get; set; }
         public Vector2 EndingPoint { get; set; }
-
         public  Brush DefaultBrush { get; set; }
 
         private RenderTarget _renderTarget;
 
-        public Line(Vector2 from, Vector2 to, RenderTarget renderTarget)
+        public Rectangle(Vector2 from, Vector2 to, RenderTarget renderTarget)
         {
             //TODO: should move out renderTarget out of the constructor.
             _renderTarget = renderTarget;
@@ -25,7 +25,7 @@ namespace LineDrawer
             StartingPoint = from;
             EndingPoint = to;
         }
-        public Line(Vector2 from, Vector2 to, RenderTarget renderTarget, Color lineColor )
+        public Rectangle(Vector2 from, Vector2 to, RenderTarget renderTarget, Color lineColor )
         {
             _renderTarget = renderTarget;
             DefaultBrush = new SolidColorBrush(renderTarget, lineColor);
@@ -37,7 +37,12 @@ namespace LineDrawer
 
         void IRenderableItem.Render(RenderTarget renderTarget2D)
         {
-            renderTarget2D.DrawLine(StartingPoint, EndingPoint, DefaultBrush);
+            var rect = new RawRectangleF( Math.Min(StartingPoint.X, EndingPoint.X),
+                                          Math.Max(StartingPoint.Y, EndingPoint.Y),
+                                          Math.Max(StartingPoint.X, EndingPoint.X),
+                                          Math.Min(StartingPoint.Y, EndingPoint.Y));
+            
+            renderTarget2D.DrawRectangle(rect, DefaultBrush);
         }
     }
 }

@@ -30,8 +30,8 @@ namespace LineDrawer
     /// </summary>
     partial class Program : SharpDx2D11Base
     {
-        private const int APP_WIDTH = 1024;
-        private const int APP_HEIGHT = 768;
+        private const int APP_WIDTH = 1200;
+        private const int APP_HEIGHT = 900;
 
         private readonly MousePosition _mousePosition = new MousePosition();
         private readonly GUIManager _guiManager = new GUIManager();
@@ -39,9 +39,15 @@ namespace LineDrawer
         public TextLayout TextLayout { get; private set; }
         public TextFormat TextFormat { get; private set; }
 
-        private List<Line> _lines = new List<Line>();
-        private Line _currentLine;
+        private List<IRenderableItem> _drawings = new List<IRenderableItem>();
+        private IRenderableItem _currentDrawing;
         private Color _currentLineColor = Color.White;
+        private DrawMode _currentDrawMode = DrawMode.Lines;
+        public enum DrawMode
+        {
+            Lines =0,
+            Rectangles =1
+        }
 
         [STAThread]
         private static void Main()
@@ -71,10 +77,25 @@ namespace LineDrawer
                 }
             );
             _guiManager.AddButton(10, 140, 200, 50, "Red Color", () =>
-            {
-                _currentLineColor = Color.Red;
-            }
+                {
+                    _currentLineColor = Color.Red;
+                }
             );
+            _guiManager.AddButton(10, 200, 200, 50, "Lines", () =>
+                {
+                    _currentDrawMode = DrawMode.Lines;
+                }
+           );
+            _guiManager.AddButton(10, 260, 200, 50, "Rectangles", () =>
+                {
+                    _currentDrawMode = DrawMode.Rectangles;
+                }
+           );
+            _guiManager.AddButton(10, 320, 200, 50, "Clear", () =>
+                {
+                    _drawings.Clear();
+                }
+           );
 
         }
 
@@ -116,12 +137,12 @@ namespace LineDrawer
             RenderTarget2D.DrawTextLayout(new Vector2(0, 0), TextLayout, SceneColorBrush, DrawTextOptions.None);
 
             //Render current line if not null "?." operator  
-            ((IRenderableItem) _currentLine)?.Render(RenderTarget2D);
+            ((IRenderableItem) _currentDrawing)?.Render(RenderTarget2D);
 
             //and all added lines 
-            foreach (IRenderableItem line in _lines )
+            foreach (IRenderableItem item in _drawings )
             {
-                line.Render(RenderTarget2D);
+                item.Render(RenderTarget2D);
             }
 
             //At last, display GUI on top of everything
@@ -145,9 +166,9 @@ namespace LineDrawer
 
             _guiManager.MouseMove(e);
 
-            if (_currentLine != null && ! _guiManager.IsOverGUIItem() )
+            if (_currentDrawing != null && ! _guiManager.IsOverGUIItem() )
             {
-                _currentLine.EndingingPoint = new Vector2(e.X, e.Y);
+                _currentDrawing.EndingPoint = new Vector2(e.X, e.Y);
             }
         }
 
@@ -156,20 +177,27 @@ namespace LineDrawer
             //Don't start creating a line if resizing window
             //if (IsResiszing()) return;
          
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && _currentDrawMode == DrawMode.Lines)
             {
-                _currentLine = new Line(new Vector2(_mousePosition.x, _mousePosition.y), 
-                                        new Vector2(_mousePosition.x, _mousePosition.y),
-                                        RenderTarget2D, _currentLineColor);
+                _currentDrawing = new Line( new Vector2(_mousePosition.x, _mousePosition.y), 
+                                            new Vector2(_mousePosition.x, _mousePosition.y),
+                                            RenderTarget2D, _currentLineColor);
+            }
+
+            else if (e.Button == MouseButtons.Left && _currentDrawMode == DrawMode.Rectangles)
+            {
+                _currentDrawing = new Rectangle(new Vector2(_mousePosition.x, _mousePosition.y),
+                                                new Vector2(_mousePosition.x, _mousePosition.y),
+                                                RenderTarget2D, _currentLineColor);
             }
         }
 
         protected override void MouseUp(MouseEventArgs e)
         {
-            if (_currentLine != null && e.Button == MouseButtons.Left)
+            if (_currentDrawing != null && e.Button == MouseButtons.Left)
             {
-                _lines.Add(_currentLine);
-                _currentLine = null;
+                _drawings.Add(_currentDrawing);
+                _currentDrawing = null;
             }
         }
 

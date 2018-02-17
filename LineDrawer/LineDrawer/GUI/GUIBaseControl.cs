@@ -12,8 +12,9 @@ using Factory = SharpDX.DirectWrite.Factory;
 
 namespace LineDrawer.GUI
 {
-    class GUIBaseControl:IRenderableItem, IUpdatableItem
+    class GUIBaseControl:IRenderable, IUpdatableItem
     {
+
         public Action OnClickDelegate { get; protected set; }
 
         public int PositionX { get; set; }
@@ -61,7 +62,7 @@ namespace LineDrawer.GUI
 
         /// <summary>
         /// Each controls knows how to render themselves, must derive this function to 
-        /// satisfy IRenderableItem interface.
+        /// satisfy IRenderable interface.
         /// </summary>
         /// <param name="renderTarget"></param>
         public virtual void Render(RenderTarget renderTarget)
