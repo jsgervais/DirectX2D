@@ -43,6 +43,7 @@ namespace LineDrawer
         private IRenderableItem _currentDrawing;
         private Color _currentLineColor = Color.White;
         private DrawMode _currentDrawMode = DrawMode.Lines;
+        private bool _fillRect = false;
         public enum DrawMode
         {
             Lines =0,
@@ -96,7 +97,11 @@ namespace LineDrawer
                     _drawings.Clear();
                 }
            );
-
+            _guiManager.AddCheckbox(10, 380, 200, 25, "Fill rectangle", () =>
+                {
+                    _fillRect = !_fillRect;
+                }
+          );
         }
 
 
@@ -136,14 +141,14 @@ namespace LineDrawer
             TextLayout = new TextLayout(FactoryDWrite, _mousePosition.GetMouseCoordinates(), TextFormat, 400, 40);
             RenderTarget2D.DrawTextLayout(new Vector2(0, 0), TextLayout, SceneColorBrush, DrawTextOptions.None);
 
-            //Render current line if not null "?." operator  
-            ((IRenderableItem) _currentDrawing)?.Render(RenderTarget2D);
-
             //and all added lines 
             foreach (IRenderableItem item in _drawings )
             {
                 item.Render(RenderTarget2D);
             }
+
+            //Render current line if not null "?." operator  
+            ((IRenderableItem)_currentDrawing)?.Render(RenderTarget2D);
 
             //At last, display GUI on top of everything
             _guiManager.Render(RenderTarget2D);
@@ -189,6 +194,7 @@ namespace LineDrawer
                 _currentDrawing = new Rectangle(new Vector2(_mousePosition.x, _mousePosition.y),
                                                 new Vector2(_mousePosition.x, _mousePosition.y),
                                                 RenderTarget2D, _currentLineColor);
+                ((Rectangle) _currentDrawing).FilledRectangle = _fillRect;
             }
         }
 

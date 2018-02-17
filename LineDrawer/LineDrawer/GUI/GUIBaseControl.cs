@@ -22,8 +22,16 @@ namespace LineDrawer.GUI
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Enabled { get; set; }
-        
 
+        public Color TextColor { get; set; } = Color.Black;
+        public Color BorderColor { get; set; } = Color.Aquamarine;
+        public Color BorderColorHover { get; set; } = Color.DarkBlue;
+        public Color BackgroundColor { get; set; } = Color.Teal;
+        public Color BackgroundColorHover { get; set; } = Color.DeepSkyBlue;
+
+        public string Text { get; set; }
+        public TextLayout TextLayout { get;  set; }
+        public TextFormat TextFormat { get;  set; }
 
         public Factory FactoryDWrite { get; private set; }
 
@@ -62,7 +70,7 @@ namespace LineDrawer.GUI
 
         /// <summary>
         /// Each controls knows how to render themselves, must derive this function to 
-        /// satisfy IRenderable interface.
+        /// satisfy IRenderableItem interface.
         /// </summary>
         /// <param name="renderTarget"></param>
         public virtual void Render(RenderTarget renderTarget)
@@ -89,6 +97,19 @@ namespace LineDrawer.GUI
             }
 
         }
+        protected static void DrawFilledRoundedRectangle(RenderTarget renderTarget, int x, int y, int w, int h, Color color = default(Color))
+        {
+            var rect = new RawRectangleF(x, y, x + w, y + h);
+            var rounded = new RoundedRectangle();
+            rounded.RadiusX = 10f;
+            rounded.RadiusY = 10f;
+            rounded.Rect = rect;
+            using (var brush = new SolidColorBrush(renderTarget, color))
+            {
+                renderTarget.FillRoundedRectangle(rounded, brush);
+            }
+
+        }
 
         protected static void DrawBorderBox(RenderTarget renderTarget, int x, int y, int w, int h, Color color = default(Color))
         {
@@ -106,6 +127,14 @@ namespace LineDrawer.GUI
             {
                 //renderTarget.DrawText(Text, TextFormat, area, textBrush, DrawTextOptions.Clip );
                 renderTarget.DrawTextLayout(new RawVector2(x, y), textLayout, textBrush);
+            }
+        }
+        protected static void DrawText(RenderTarget renderTarget, int x, int y, int w, int h, string text, TextFormat textFormat, Color color = default(Color))
+        {
+            using (var textBrush = new SolidColorBrush(renderTarget, color))
+            {
+                var area = new RawRectangleF(x, y, x + w, y + h);
+                renderTarget.DrawText(text, textFormat, area, textBrush);
             }
         }
     }

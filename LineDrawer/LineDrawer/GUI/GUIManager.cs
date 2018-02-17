@@ -49,9 +49,10 @@ namespace LineDrawer.GUI
         }
 
 
-        public void AddCheckbox( int x, int y, int h, Font font, Color color = default(Color))
+        public void AddCheckbox(int x, int y, int w, int h, string text, Action onClickDelegate)
         {
-
+            var button = new GUICheckbox(x, y, w, h, text, onClickDelegate);
+            _controls.Add(button);
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace LineDrawer
         public Vector2 StartingPoint { get; set; }
         public Vector2 EndingPoint { get; set; }
         public  Brush DefaultBrush { get; set; }
+        public bool FilledRectangle = false;
 
         private RenderTarget _renderTarget;
 
@@ -43,6 +44,7 @@ namespace LineDrawer
                                           Math.Min(StartingPoint.Y, EndingPoint.Y));
             
             renderTarget2D.DrawRectangle(rect, DefaultBrush);
+            if (FilledRectangle) renderTarget2D.FillRectangle(rect, DefaultBrush);
         }
     }
 }

@@ -11,15 +11,6 @@ namespace LineDrawer.GUI
     {
          
         public bool RoundedButton { get; set; }
-        public Color BackgroundColor { get; set; } = Color.Teal;
-        public Color BackgroundColorHover { get; set; } = Color.DeepSkyBlue;
-        public Color BorderColor { get; set; } = Color.Aquamarine;
-        public Color BorderColorHover { get; set; } = Color.DarkBlue;
-        public Color TextColor { get; set; } = Color.Black;
-
-        public string Text { get; set; }
-        public TextLayout TextLayout { get; private set; }
-        public TextFormat TextFormat { get; private set; }
 
         public GUIButton(int x, int y, int w, int h, string text, Action onClickDelegate)
         {
@@ -36,7 +27,7 @@ namespace LineDrawer.GUI
 
         public override void Update(Timer time)
         { 
-
+            //TODO manage clicked animation 
 
         }
 
